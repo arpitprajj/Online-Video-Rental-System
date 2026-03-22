@@ -11,19 +11,21 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/videos")
+@RequestMapping("/api")
 public class VideoController {
 
     @Autowired
     private VideoService videoService;
 
-    @PostMapping
+
+    @PostMapping("/admin/videos")
     public ResponseEntity<?> createVideo(@RequestBody Video video) {
         Video savedVideo = videoService.createVideo(video);
         return new ResponseEntity<>(savedVideo, HttpStatus.CREATED);
     }
 
-    @GetMapping
+
+    @GetMapping("/videos")
     public ResponseEntity<?> getAllVideos() {
         List<Video> videos = videoService.getAllVideos();
 
@@ -34,7 +36,7 @@ public class VideoController {
         return ResponseEntity.ok(videos);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/videos/{id}")
     public ResponseEntity<?> getVideoById(@PathVariable String id) {
 
         Optional<Video> video = videoService.getVideoById(id);
@@ -46,7 +48,8 @@ public class VideoController {
         return ResponseEntity.ok(video.get());
     }
 
-    @PutMapping("/{id}")
+
+    @PutMapping("/admin/videos/{id}")
     public ResponseEntity<?> updateVideo(@PathVariable String id,
                                          @RequestBody Video video) {
 
@@ -58,7 +61,7 @@ public class VideoController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/videos/{id}")
     public ResponseEntity<?> deleteVideo(@PathVariable String id) {
 
         try {
