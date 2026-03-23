@@ -1,8 +1,13 @@
 package com.rv.Online_Video_Rental_System.service;
 
+import com.rv.Online_Video_Rental_System.entity.User;
 import com.rv.Online_Video_Rental_System.entity.Video;
+import com.rv.Online_Video_Rental_System.exception.ResourceNotFoundException;
+import com.rv.Online_Video_Rental_System.repository.UserRepository;
 import com.rv.Online_Video_Rental_System.repository.VideoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +18,8 @@ public class VideoService {
 
     @Autowired
     private VideoRepository videoRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public Video createVideo(Video video) {
 
@@ -53,4 +60,9 @@ public class VideoService {
 
         videoRepository.deleteById(id);
     }
+
+    public List<Video>searchByTitle(String title){
+        return videoRepository.findByTitleContainingIgnoreCase(title);
+    }
+
 }

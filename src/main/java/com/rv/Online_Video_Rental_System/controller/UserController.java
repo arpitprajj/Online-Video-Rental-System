@@ -18,13 +18,13 @@ public class UserController {
     private UserService userService;
 
 
-    @PostMapping("register")
+    @PostMapping("/admin/users")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User savedUser = userService.createUser(user);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
-    @GetMapping("/users")
+    @GetMapping("/admin/users")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
 
@@ -35,7 +35,7 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable String id) {
 
         Optional<User> user = userService.getUserById(id);
@@ -44,7 +44,7 @@ public class UserController {
         return ResponseEntity.ok(user.get());
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/admin/users/{id}")
     public ResponseEntity<User> updateUser(@PathVariable String id,
                                         @RequestBody User user) {
 
@@ -55,7 +55,7 @@ public class UserController {
         }
 
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/admin/users/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
 
 

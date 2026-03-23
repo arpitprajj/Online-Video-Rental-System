@@ -1,6 +1,9 @@
 package com.rv.Online_Video_Rental_System.config;
 
+import com.rv.Online_Video_Rental_System.dto.CustomAccessDeniedHandler;
+import com.rv.Online_Video_Rental_System.dto.CustomAuthenticationEntryPoint;
 import com.rv.Online_Video_Rental_System.service.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +18,10 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
+    @Autowired
+    private CustomAccessDeniedHandler accessDeniedHandler;
+    @Autowired
+    private CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     private final CustomUserDetailsService userDetailsService;
 
@@ -29,11 +36,14 @@ public class SecurityConfig {
         http.csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth->
                         auth.requestMatchers("/register").permitAll()
-                                .requestMatchers("/api/videos/**","/api/profile/**").hasAnyRole("CUSTOMER","ADMIN")
-                                .requestMatchers("/api/**").hasRole("ADMIN")
+                                .requestMatchers("/api/admin").hasRole("ADMIN")
+                                .requestMatchers("/api/videos/**","/api/users/**","/api/rentals/**").hasAnyRole("CUSTOMER","ADMIN")
                                 .anyRequest().authenticated()
 
-                ).httpBasic(Customizer.withDefaults());
+                ).exceptionHandling(ex->ex
+                        .accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint(authenticationEntryPoint))
+                .httpBasic(Customizer.withDefaults());
         return http.build();
         
     }

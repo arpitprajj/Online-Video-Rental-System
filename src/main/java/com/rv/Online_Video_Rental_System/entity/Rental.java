@@ -1,6 +1,6 @@
 package com.rv.Online_Video_Rental_System.entity;
 
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -10,18 +10,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Video {
+public class Rental {
+
     @Id
     @GeneratedValue
     private String id;
-    private String title;
-    private String genre;
-    private String director;
-    private boolean availability;
 
+    @ManyToOne
+    @JsonBackReference
+    private User user;
+
+    @ManyToOne
+    private Video video;
+
+    private LocalDateTime rentedAt;
+    private boolean returned;
 }
