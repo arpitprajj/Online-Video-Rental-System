@@ -1,5 +1,6 @@
 package com.rv.Online_Video_Rental_System.service;
 
+import com.rv.Online_Video_Rental_System.exception.EmailAlreadyExistException;
 import com.rv.Online_Video_Rental_System.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.rv.Online_Video_Rental_System.entity.User;
@@ -21,6 +22,7 @@ public class UserService {
 
     public User createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if(userRepository.existsByEmail(user.getEmail())) throw new EmailAlreadyExistException("This Email already exist");
 
         if (user.getRole() == null || user.getRole().isBlank()) {
             user.setRole("CUSTOMER");

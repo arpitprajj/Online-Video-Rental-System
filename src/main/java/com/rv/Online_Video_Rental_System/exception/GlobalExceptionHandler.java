@@ -16,4 +16,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String>RentalExceptionHandler(RentalException ex){
         return new ResponseEntity(ex.getMessage(),HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(EmailAlreadyExistException.class)
+    public ResponseEntity<String>EmailAlreadyExistExceptionHandler(EmailAlreadyExistException ex){
+        return new ResponseEntity(ex.getMessage(),HttpStatus.BAD_REQUEST);
+    }
 }
