@@ -1,10 +1,7 @@
 package com.rv.Online_Video_Rental_System.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +16,8 @@ public class Video {
     @Id
     @GeneratedValue
     private String id;
+    @Version
+    private Long version;
     private String title;
     private String genre;
     private String director;

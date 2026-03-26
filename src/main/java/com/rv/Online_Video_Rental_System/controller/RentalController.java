@@ -21,9 +21,9 @@ public class RentalController {
         Rental rental=rentalService.rentVideo(id,name);
         return ResponseEntity.ok(rental);
     }
-    @PostMapping("/return/{id}")
-    public ResponseEntity<Rental>returnVideo(@PathVariable String id){
-        Rental rental=rentalService.returnVideo(id);
+    @PatchMapping("/return/{id}")
+    public ResponseEntity<Rental>returnVideo(@PathVariable String id,Principal principal){
+        Rental rental=rentalService.returnVideo(id,principal.getName());
         return  ResponseEntity.ok(rental);
     }
     @GetMapping
