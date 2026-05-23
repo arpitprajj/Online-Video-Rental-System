@@ -9,6 +9,7 @@ import com.rv.Online_Video_Rental_System.repository.RentalRepository;
 import com.rv.Online_Video_Rental_System.repository.UserRepository;
 import com.rv.Online_Video_Rental_System.repository.VideoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,8 @@ public class RentalService {
     UserRepository userRepository;
     @Autowired
     VideoRepository videoRepository;
+    @Autowired
+    EmailService emailService;
 
     public Rental rentVideo(String id,String name){
         User user=userRepository.findByEmail(name);
@@ -40,14 +43,19 @@ public class RentalService {
             rentalRepository.save(rental);
             video.setAvailability(false);
             videoRepository.save(video);
+            emailService.sendEmail(user.getEmail(), "Video Rented Successfully",
+                    "You rented: " + video.getTitle());
             return rental;
         }
         catch (ObjectOptimisticLockingFailureException e) {
+            emailService.sendEmail(user.getEmail(), "Video Not Available",
+                    "The video not available: " + video.getTitle());
             throw new RentalException("Video was just rented by another user. Try again.");
         }
     }
 
 
+    @Cacheable(value = "rent")
     public Rental returnVideo(String rentalId,String email){
        //User user=userRepository.findByEmail(email);
        Rental rental=rentalRepository.findById(rentalId).orElseThrow(()->new ResourceNotFoundException("No such Rental Exist"));
@@ -61,7 +69,8 @@ public class RentalService {
        video.setAvailability(true);
        videoRepository.save(video);
        rentalRepository.save(rental);
-
+        emailService.sendEmail(email, "Video Returned Successfully",
+                "You returned: " + video.getTitle());
        return rental;
     }
     public List<Rental> getAllRentals(String name){

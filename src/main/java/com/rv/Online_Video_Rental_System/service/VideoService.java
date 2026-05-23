@@ -6,6 +6,9 @@ import com.rv.Online_Video_Rental_System.exception.ResourceNotFoundException;
 import com.rv.Online_Video_Rental_System.repository.UserRepository;
 import com.rv.Online_Video_Rental_System.repository.VideoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -35,14 +38,22 @@ public class VideoService {
         return videoRepository.findAll();
     }
 
+    @Cacheable(value = "video")
     public Optional<Video> getVideoById(String id) {
-        return videoRepository.findById(id);
+        try {
+            return videoRepository.findById(id);
+        }
+        catch (RuntimeException ex) {
+            throw new ResourceNotFoundException("Video not available :" + id);
+        }
+
     }
 
+    @CachePut(value = "video")
     public Video updateVideo(String id, Video updatedVideo) {
 
         Video existingVideo = videoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Video not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Video not found"));
 
         existingVideo.setTitle(updatedVideo.getTitle());
         existingVideo.setGenre(updatedVideo.getGenre());
@@ -52,6 +63,7 @@ public class VideoService {
         return videoRepository.save(existingVideo);
     }
 
+    @CacheEvict(value="video")
     public void deleteVideo(String id) {
 
         if (!videoRepository.existsById(id)) {
@@ -61,6 +73,7 @@ public class VideoService {
         videoRepository.deleteById(id);
     }
 
+    @Cacheable(value = "video")
     public List<Video>searchByTitle(String title){
         return videoRepository.findByTitleContainingIgnoreCase(title);
     }
